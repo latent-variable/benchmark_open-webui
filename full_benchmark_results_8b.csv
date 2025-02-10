@@ -1,0 +1,13 @@
+Benchmark,Timestamp,Model Name,CoT Enabled,Overall Score,Samples per Benchmark,Total Evaluation Time (s)
+ARC,2025-02-07 14:01:04,llama3.1:latest,False,0.82,100,23.3890118598938
+ARC,2025-02-07 14:11:50,llama3.1:latest,True,0.82,100,646.766618013382
+ARC,2025-02-07 14:38:51,deepseek_r1_reasoner.Reasoning_Effort_1/deepseek-r1:8b,True,0.88,100,1452.7567768096924
+ARC,2025-02-07 15:12:38,deepseek_r1_reasoner_2.Reasoning_Effort_2/deepseek-r1:8b,True,0.91,100,2027.0472030639648
+ARC,2025-02-07 15:51:38,deepseek_r1_reasoner_3.Reasoning_Effort_3/deepseek-r1:8b,True,0.86,100,2340.1177208423615
+ARC,2025-02-07 16:35:52,deepseek_r1_reasoner_4.Reasoning_Effort_4/deepseek-r1:8b,True,0.84,100,2654.076549768448
+GSM8K,2025-02-07 16:41:31,llama3.1:latest,False,0.08,100,25.074758291244507
+GSM8K,2025-02-07 16:47:14,llama3.1:latest,True,0.64,100,343.3044309616089
+GSM8K,2025-02-07 17:03:23,deepseek_r1_reasoner.Reasoning_Effort_1/deepseek-r1:8b,True,0.76,100,968.7584612369537
+GSM8K,2025-02-07 17:31:02,deepseek_r1_reasoner_2.Reasoning_Effort_2/deepseek-r1:8b,True,0.78,100,1659.1282787322998
+GSM8K,2025-02-07 18:11:57,deepseek_r1_reasoner_3.Reasoning_Effort_3/deepseek-r1:8b,True,0.8,100,2454.7204661369324
+GSM8K,2025-02-07 19:07:37,deepseek_r1_reasoner_4.Reasoning_Effort_4/deepseek-r1:8b,True,0.81,100,3340.4237608909607

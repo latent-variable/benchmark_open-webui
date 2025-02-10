@@ -1,0 +1,5 @@
+Timestamp,Model Name,Overall Score,Samples per Benchmark,ARC
+2025-02-07 11:40:36,llama3.1:latest + llama3.2:latest,0.86,100,0.86
+2025-02-07 12:08:25,deepseek_r1_reasoner.Reasoning_Effort_1/deepseek-r1:8b + llama3.2:latest,0.79,100,0.79
+2025-02-07 12:47:48,deepseek_r1_reasoner_2.Reasoning_Effort_2/deepseek-r1:8b + llama3.2:latest,0.82,100,0.82
+2025-02-07 13:38:19,deepseek_r1_reasoner_3.Reasoning_Effort_3/deepseek-r1:8b + llama3.2:latest,0.79,100,0.79

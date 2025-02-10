@@ -1,0 +1,8 @@
+Benchmark,Timestamp,Model Name,CoT Enabled,Overall Score,Samples per Benchmark,Total Evaluation Time (s)
+ARC,2025-02-08 13:46:56,deepseek_r1_reasoner.Reasoning_Effort_1/deepseek-r1:32b,True,0.95,100,3749.719578027725
+ARC,2025-02-08 15:12:27,deepseek_r1_reasoner_2.Reasoning_Effort_2/deepseek-r1:32b,True,0.94,100,5130.9201719760895
+ARC,2025-02-08 17:13:25,deepseek_r1_reasoner_3.Reasoning_Effort_3/deepseek-r1:32b,True,0.96,100,7257.252442121506
+ARC,2025-02-08 19:25:43,deepseek_r1_reasoner_4.Reasoning_Effort_4/deepseek-r1:32b,True,0.95,100,7937.905070066452
+GSM8K,2025-02-08 20:20:04,deepseek_r1_reasoner.Reasoning_Effort_1/deepseek-r1:32b,True,0.96,100,3261.686187982559
+GSM8K,2025-02-08 21:47:21,deepseek_r1_reasoner_2.Reasoning_Effort_2/deepseek-r1:32b,True,0.95,100,5236.3301429748535
+GSM8K,2025-02-08 23:44:03,deepseek_r1_reasoner_3.Reasoning_Effort_3/deepseek-r1:32b,True,0.94,100,7002.549297094345

@@ -1,92 +1,97 @@
 import os
 import csv
+import time
 import datetime
 from openwebui_model import OpenWebUIModel
 from deepeval.benchmarks import GSM8K, DROP, ARC, BoolQ, LogiQA, BigBenchHard
+from deepeval.benchmarks.modes import ARCMode
 from deepeval.benchmarks import MMLU
 from deepeval.benchmarks.mmlu.task import MMLUTask
 from deepeval.benchmarks.tasks import BigBenchHardTask
 
-# Load OpenWebUI model
-model = OpenWebUIModel()
-
 # Define a subset limit (e.g., evaluate only 10 examples per benchmark for speed)
-SUBSET_SIZE = 10  # Adjust this for faster/slower evaluation
+SUBSET_SIZE = 100 # Adjust this for faster/slower evaluation
 
 # Define BBH tasks to focus on complex reasoning
 BBH_TASKS = [
-    # BigBenchHardTask.BOOLEAN_EXPRESSIONS,
-    # BigBenchHardTask.CAUSAL_JUDGEMENT,
+    BigBenchHardTask.BOOLEAN_EXPRESSIONS,
+    BigBenchHardTask.CAUSAL_JUDGEMENT,
     BigBenchHardTask.DATE_UNDERSTANDING,
     BigBenchHardTask.LOGICAL_DEDUCTION_THREE_OBJECTS,
     BigBenchHardTask.MULTISTEP_ARITHMETIC_TWO,
-    BigBenchHardTask.WORD_SORTING
 ]
 
 # Define full benchmark suite
 benchmarks = {
-    # "MMLU": MMLU(
-    #     tasks=[
-    #         MMLUTask.HIGH_SCHOOL_COMPUTER_SCIENCE,
-    #         # MMLUTask.ASTRONOMY,
-    #         # MMLUTask.ELECTRICAL_ENGINEERING,
-    #         # MMLUTask.PROFESSIONAL_MEDICINE
-    #     ],
-    #     n_shots=3,  # Few-shot learning
-    #     n_problems_per_task=SUBSET_SIZE
-    # ),
-    # "GSM8K": GSM8K(n_problems=SUBSET_SIZE, ),
-    # "DROP": DROP(n_problems_per_task=SUBSET_SIZE, ),
-    "BIGBenchHard": BigBenchHard(
-        tasks=BBH_TASKS,
-        n_shots=3,  # Uses few-shot learning (0-3 shots)
-        enable_cot=True,  # Enables Chain-of-Thought reasoning
-        n_problems_per_task=SUBSET_SIZE, 
-    ),
-    # "ARC": ARC(n_problems=SUBSET_SIZE),
-    # "BoolQ": BoolQ(n_problems=SUBSET_SIZE),
-    # "LogiQA": LogiQA(n_problems_per_task=SUBSET_SIZE )
+    "ARC": ARC(n_problems=SUBSET_SIZE, n_shots=0, mode=ARCMode.CHALLENGE),
+    "GSM8K": GSM8K(n_problems=SUBSET_SIZE,n_shots=0,enable_cot=False)
 }
 
-# Ensure CSV file is stored in the script's directory
-script_dir = os.path.dirname(os.path.abspath(__file__))  # Get the directory of this script
-csv_file = os.path.join(script_dir, "full_benchmark_results.csv")  # Save CSV in the same directory
-headers = ["Timestamp", "Model Name", "Overall Score", "Samples per Benchmark"] + list(benchmarks.keys())
+# Define model names and whether CoT (Chain-of-Thought) is enabled
+model_names = [
+    # ("llama3.1:latest", False),
+    # ("llama3.1:latest", True),
+    ("deepseek_r1_reasoner.Reasoning_Effort_1/deepseek-r1:32b", True),
+    ("deepseek_r1_reasoner_2.Reasoning_Effort_2/deepseek-r1:32b", True),
+    ("deepseek_r1_reasoner_3.Reasoning_Effort_3/deepseek-r1:32b", True),
+    ("deepseek_r1_reasoner_4.Reasoning_Effort_4/deepseek-r1:32b", True),
+]
 
-# Get current timestamp
-current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+for benchmark_name, benchmark in benchmarks.items():
+    for model_name, CoT in model_names:
 
-# Collect benchmark scores
-benchmark_scores = {}
+        # Initialize OpenWebUIModel
+        model = OpenWebUIModel(model=model_name, enable_cot=CoT)
 
-for name, benchmark in benchmarks.items():
-    print(f"🚀 Running subset benchmark: {name} with {SUBSET_SIZE} samples...")
-   
-    benchmark.evaluate(model=model)
-    benchmark_scores[name] = benchmark.overall_score
+        print(f"🚀 Running subset benchmark: {benchmark_name} with {SUBSET_SIZE} samples...")
 
-# Calculate overall average score
-overall_score = sum(benchmark_scores.values()) / len(benchmark_scores)
+        # Start timing the evaluation
+        start_time = time.time()
 
-# Create a row with results
-csv_row = [
-    current_time,
-    model.get_model_name(),
-    overall_score,
-    SUBSET_SIZE
-] + [benchmark_scores.get(name, "N/A") for name in benchmarks.keys()]
+        # Run the evaluation
+        benchmark.evaluate(model=model)
 
-# Append results to CSV file
-file_exists = os.path.isfile(csv_file)
+        # End timing the evaluation
+        end_time = time.time()
+        elapsed_time = end_time - start_time
+        benchmark_time = elapsed_time  # Store elapsed time
 
-with open(csv_file, mode="a", newline="") as file:
-    writer = csv.writer(file)
+        benchmark_score = benchmark.overall_score
+        print(f"✅ Benchmark '{benchmark_name}' completed in {elapsed_time:.2f} seconds.")
 
-    # Write headers if the file does not exist
-    if not file_exists:
-        writer.writerow(headers)
+        # Calculate overall average score
+        overall_score = benchmark_score
 
-    # Append new row
-    writer.writerow(csv_row)
+        # Ensure CSV file is stored in the script's directory
+        script_dir = os.path.dirname(os.path.abspath(__file__))  # Get the directory of this script
+        csv_file = os.path.join(script_dir, "full_benchmark_results.csv")  # Save CSV in the same directory
+        headers = ["Benchmark", "Timestamp", "Model Name", "CoT Enabled", "Overall Score", "Samples per Benchmark", "Total Evaluation Time (s)"]
 
-print(f"\n✅ Full benchmark completed. Results saved to {csv_file}.")
+        # Get current timestamp
+        current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+        # Create a row with results
+        csv_row = [
+            benchmark_name,
+            current_time,
+            model.get_model_name(),
+            CoT,  # Include CoT status
+            overall_score,
+            SUBSET_SIZE,
+            benchmark_time# Total evaluation time
+        ] 
+
+        # Append results to CSV file
+        file_exists = os.path.isfile(csv_file)
+
+        with open(csv_file, mode="a", newline="") as file:
+            writer = csv.writer(file)
+
+            # Write headers if the file does not exist
+            if not file_exists:
+                writer.writerow(headers)
+
+            # Append new row
+            writer.writerow(csv_row)
+
+print(f"\n✅ {model.get_model_name()} benchmark completed. Results saved to {csv_file}.")
